@@ -41,8 +41,9 @@ const HomePage = () => {
           dispatch(setUser(response.user));
           // Getting user items
           const itemRes = await itemService("GET");
+          console.log("itemRes: ", itemRes.items);
           // Set items data
-          dispatch(setItems(itemRes.data));
+          dispatch(setItems(itemRes.items));
         } else {
           // Redirect to the landing page if not authenticated.
           router.push(`/`);
@@ -78,7 +79,7 @@ const HomePage = () => {
       quantity: item.quantity,
       price: item.price,
     };
-    setEditingId(item.id);
+    setEditingId(item.item_id);
     setOriginalItem(form);
     setForm(form);
     setErrors({});
@@ -116,17 +117,17 @@ const HomePage = () => {
         if (response.success) {
           // Prepare the updated data
           const updatedItem: ItemDataProps = {
-            id: response.data.id,
-            name: response.data.name,
-            quantity: response.data.quantity,
-            price: response.data.price,
-            created_at: response.data.created_at,
-            updated_at: response.data.updated_at,
+            item_id: response.item.item_id,
+            name: response.item.name,
+            quantity: response.item.quantity,
+            price: response.item.price,
+            created_at: response.item.created_at,
+            updated_at: response.item.updated_at,
           };
           // Update the changed item
           setCurrentItems((prev) =>
             prev.map((item) =>
-              item.id === updatedItem.id ? updatedItem : item,
+              item.item_id === updatedItem.item_id ? updatedItem : item,
             ),
           );
 
@@ -147,7 +148,7 @@ const HomePage = () => {
         const response = await itemService("POST", 0, form);
         if (response.success) {
           const newItem: ItemDataProps = {
-            id: response.data.id,
+            item_id: response.data.item_id,
             name: response.data.name,
             quantity: response.data.quantity,
             price: response.data.price,
@@ -184,10 +185,12 @@ const HomePage = () => {
     if (!result.isConfirmed) return;
 
     try {
-      const response = await itemService("DELETE", item.id);
+      const response = await itemService("DELETE", item.item_id);
 
       if (response.success) {
-        setCurrentItems((prev) => prev.filter((i) => i.id !== item.id));
+        setCurrentItems((prev) =>
+          prev.filter((i) => i.item_id !== item.item_id),
+        );
         Swal.fire({
           icon: "success",
           title: "Item deleted",
@@ -243,9 +246,9 @@ const HomePage = () => {
               No items yet. Click "Add Item" to get started.
             </p>
           ) : (
-            currentItems.map((item) => (
+            currentItems.map((item, idx) => (
               <div
-                key={item.id}
+                key={idx}
                 className="grid grid-cols-[2fr_1fr_1fr_auto] gap-2 items-center py-3 px-2 border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
               >
                 <p className="text-left text-neutral-800">{item.name}</p>

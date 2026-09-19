@@ -2,7 +2,7 @@
 
 import Swal from "sweetalert2";
 
-const BASE = process.env.NEXT_PUBLIC_API_URL;
+const BASE = `${process.env.NEXT_PUBLIC_API_URL}/auth`;
 const DEFAULT_TIMEOUT_MS = 15000;
 
 export interface AuthProps {

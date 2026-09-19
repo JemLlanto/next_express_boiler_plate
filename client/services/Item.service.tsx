@@ -3,11 +3,11 @@
 import Swal from "sweetalert2";
 import { options } from "./auth.service";
 
-const BASE = process.env.NEXT_PUBLIC_API_URL;
+const BASE = `${process.env.NEXT_PUBLIC_API_URL}`;
 const DEFAULT_TIMEOUT_MS = 15000;
 
 export interface ItemDataProps {
-  id: number;
+  item_id: number;
   name: string;
   quantity: number;
   price: number;
@@ -55,7 +55,7 @@ export const itemService = async (
 
   try {
     // Determine the API route based on the method and itemId
-    const apiRoute = itemId ? `items/${itemId}` : `items`;
+    const apiRoute = itemId ? `item/${itemId}` : `item`;
     // Determine Error Message to be displayed
     const errorMessage =
       method === "POST"
@@ -68,6 +68,7 @@ export const itemService = async (
               ? "Fetching Item Failed"
               : "Invalid Method";
 
+    // console.log("body: ", body);
     const response = await fetch(
       `${BASE}/${apiRoute}`,
       options(method, body, controller.signal),
