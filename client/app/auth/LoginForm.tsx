@@ -134,36 +134,6 @@ const LoginForm = () => {
         </button>
       </form>
 
-      <div className="flex items-center gap-4 my-6">
-        <div className="flex-1 h-px bg-gray-300" />
-        <span className="text-sm text-gray-500">or continue with</span>
-        <div className="flex-1 h-px bg-gray-300" />
-      </div>
-
-      <div className="flex justify-center items-center gap-5">
-        <button
-          type="button"
-          className="size-8 cursor-pointer hover:scale-102 transition duration-200 ease-in-out"
-        >
-          <Image
-            src={facebookIcon}
-            alt="Facebook Icon"
-            className="size-full object-contain"
-          />
-        </button>
-
-        <button
-          type="button"
-          className="size-8 cursor-pointer hover:scale-102 transition duration-200 ease-in-out"
-        >
-          <Image
-            src={googleIcon}
-            alt="Facebook Icon"
-            className="size-full object-contain"
-          />
-        </button>
-      </div>
-
       <div className="text-center mt-6 text-sm">
         <span className="text-gray-500">Don't have an account?</span>{" "}
         <button
