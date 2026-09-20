@@ -160,7 +160,7 @@ async function deleteItem(req, res) {
     const userId = req.user.user_id;
     const { item_id } = req.params;
 
-    const deleted = await Item.delete(item_id, userId);
+    const deleted = await Item.deleteItem(item_id, userId);
 
     if (!deleted) {
       return res.status(404).json({
