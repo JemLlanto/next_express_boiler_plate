@@ -79,17 +79,32 @@ export const itemService = async (
     // Getting the value of response status
     const status = response.status;
     // console.log("data: ", data, status);
-
+    // Failed API request handling with SweetAlert2 for user feedback
     if (!response.ok) {
-      // Closing modal to see the error message
-      Swal.fire({
-        icon: "error",
-        title: errorMessage,
-        text:
-          status === 500
-            ? "Something went wrong. Please try again."
-            : data.message || "Something went wrong. Please try again.",
-      });
+      if (status === 401) {
+        Swal.fire({
+          icon: "error",
+          title: errorMessage,
+          text:
+            `${data.message}, Redirecting to login...` ||
+            "Something went wrong. Please try again.",
+        }).then(() => {
+          setTimeout(() => {
+            // Redirect to login page
+            window.location.href = "/auth/login";
+          }, 1500); // Wait for 1 second before redirecting
+        });
+      } else {
+        // Closing modal to see the error message
+        Swal.fire({
+          icon: "error",
+          title: errorMessage,
+          text:
+            status === 500
+              ? "Something went wrong. Please try again."
+              : data.message || "Something went wrong. Please try again.",
+        });
+      }
 
       return data;
     }
