@@ -46,7 +46,7 @@ const HomePage = () => {
           dispatch(setItems(itemRes.items));
         } else {
           // Redirect to the landing page if not authenticated.
-          router.push(`/`);
+          router.push(`/auth/login`);
         }
       } catch (err) {
         console.error("Error: ", err);
@@ -148,12 +148,12 @@ const HomePage = () => {
         const response = await itemService("POST", 0, form);
         if (response.success) {
           const newItem: ItemDataProps = {
-            item_id: response.data.item_id,
-            name: response.data.name,
-            quantity: response.data.quantity,
-            price: response.data.price,
-            created_at: response.data.created_at,
-            updated_at: response.data.updated_at,
+            item_id: response.item.item_id,
+            name: response.item.name,
+            quantity: response.item.quantity,
+            price: response.item.price,
+            created_at: response.item.created_at,
+            updated_at: response.item.updated_at,
           };
           setCurrentItems((prev) => [newItem, ...prev]);
           Swal.fire({
