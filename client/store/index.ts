@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import passwordReducer from "./passwordToggleSlice";
-import userReducer from "./userDataSlice";
-import itemReducer from "./itemData.slice";
-import isLoadingReducer from "./isLoading.slice";
+import passwordReducer from "./slice/passwordToggleSlice";
+import userReducer from "./slice/userDataSlice";
+import itemReducer from "./slice/itemData.slice";
+import isLoadingReducer from "./slice/isLoading.slice";
 
 export const store = configureStore({
   reducer: {

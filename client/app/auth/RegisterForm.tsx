@@ -11,8 +11,8 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeClosed } from "lucide-react";
 import Swal from "sweetalert2";
 import { RootState } from "@/store";
-import { togglePasswordVisible } from "@/store/passwordToggleSlice";
-import { setUser } from "@/store/userDataSlice";
+import { togglePasswordVisible } from "@/store/slice/passwordToggleSlice";
+import { setUser } from "@/store/slice/userDataSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
 const RegisterForm = () => {

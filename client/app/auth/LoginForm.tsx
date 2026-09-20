@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Swal from "sweetalert2";
 import { RootState } from "@/store";
-import { togglePasswordVisible } from "@/store/passwordToggleSlice";
+import { togglePasswordVisible } from "@/store/slice/passwordToggleSlice";
 import { Eye, EyeClosed } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
