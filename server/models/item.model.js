@@ -8,7 +8,9 @@ async function findByUserId(user_id) {
         name,
         user_id,
         quantity,
-        price
+        price,
+        created_at,
+        updated_at
       FROM item
       WHERE user_id = ?
       ORDER BY item_id DESC
@@ -27,7 +29,9 @@ async function findById(item_id, user_id) {
         name,
         user_id,
         quantity,
-        price
+        price,
+        created_at,
+        updated_at
       FROM item
       WHERE item_id = ?
         AND user_id = ?
@@ -96,13 +100,7 @@ async function createItem(name, user_id, quantity, price) {
     [name, user_id, quantity, price],
   );
 
-  return {
-    item_id: result.insertId,
-    name,
-    user_id,
-    quantity,
-    price,
-  };
+  return findById(result.insertId, user_id);
 }
 
 async function updateItem(item_id, user_id, { name, quantity, price }) {
