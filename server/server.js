@@ -7,7 +7,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/auth.route");
 const itemRoutes = require("./routes/item.route");
 const { requireAuth } = require("./middleware/auth.middleware");
-const { testConnection } = require("./lib/mysql");
+const { testConnection } = require("./lib/prisma");
 
 const app = express();
 
