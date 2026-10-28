@@ -1,72 +1,28 @@
-const { pool } = require("../lib/mysql");
+const prisma = require("../lib/prisma");
 
 async function findByUserId(user_id) {
-  const [rows] = await pool.execute(
-    `
-      SELECT
-        item_id,
-        name,
-        user_id,
-        quantity,
-        price,
-        created_at,
-        updated_at
-      FROM item
-      WHERE user_id = ?
-      ORDER BY item_id DESC
-    `,
-    [user_id],
-  );
-
-  return rows;
+  return prisma.item.findMany({
+    where: { user_id },
+    orderBy: { item_id: "desc" },
+  });
 }
 
 async function findById(item_id, user_id) {
-  const [rows] = await pool.execute(
-    `
-      SELECT
-        item_id,
-        name,
-        user_id,
-        quantity,
-        price,
-        created_at,
-        updated_at
-      FROM item
-      WHERE item_id = ?
-        AND user_id = ?
-      LIMIT 1
-    `,
-    [item_id, user_id],
-  );
-
-  if (rows.length === 0) {
-    return null;
-  }
-
-  return rows[0];
+  return prisma.item.findFirst({
+    where: { item_id: Number(item_id), user_id },
+  });
 }
 
 async function findByName(name, user_id, excludeItemId = null) {
-  let query = `
-    SELECT *
-    FROM item
-    WHERE name = ?
-      AND user_id = ?
-  `;
-
-  const values = [name, user_id];
-
-  if (excludeItemId !== null) {
-    query += ` AND item_id != ?`;
-    values.push(excludeItemId);
-  }
-
-  query += ` LIMIT 1`;
-
-  const [rows] = await pool.execute(query, values);
-
-  return rows[0] || null;
+  return prisma.item.findFirst({
+    where: {
+      name,
+      user_id,
+      ...(excludeItemId !== null
+        ? { item_id: { not: Number(excludeItemId) } }
+        : {}),
+    },
+  });
 }
 
 async function createItem(name, user_id, quantity, price) {
@@ -87,25 +43,20 @@ async function createItem(name, user_id, quantity, price) {
     throw new Error("Item already exists");
   }
 
-  const [result] = await pool.execute(
-    `
-      INSERT INTO item (
-        name,
-        user_id,
-        quantity,
-        price
-      )
-      VALUES (?, ?, ?, ?)
-    `,
-    [name, user_id, quantity, price],
-  );
+  const item = await prisma.item.create({
+    data: {
+      name,
+      user_id,
+      quantity: Number(quantity),
+      price: Number(price),
+    },
+  });
 
-  return findById(result.insertId, user_id);
+  return item;
 }
 
 async function updateItem(item_id, user_id, { name, quantity, price }) {
-  const fields = [];
-  const values = [];
+  const data = {};
 
   // Check if the new name already belongs to another item
   if (name !== undefined) {
@@ -115,54 +66,47 @@ async function updateItem(item_id, user_id, { name, quantity, price }) {
       throw new Error("Item name already exists");
     }
 
-    fields.push("name = ?");
-    values.push(name);
+    data.name = name;
   }
 
   if (quantity !== undefined) {
-    fields.push("quantity = ?");
-    values.push(quantity);
+    data.quantity = Number(quantity);
   }
 
   if (price !== undefined) {
-    fields.push("price = ?");
-    values.push(price);
+    data.price = Number(price);
   }
 
-  if (fields.length === 0) {
+  if (Object.keys(data).length === 0) {
     return null;
   }
 
-  values.push(item_id, user_id);
+  const existing = await findById(item_id, user_id);
 
-  const [result] = await pool.execute(
-    `
-      UPDATE item
-      SET ${fields.join(", ")}
-      WHERE item_id = ?
-        AND user_id = ?
-    `,
-    values,
-  );
-
-  if (result.affectedRows === 0) {
+  if (!existing) {
     return null;
   }
 
-  return findById(item_id, user_id);
+  const item = await prisma.item.update({
+    where: { item_id: Number(item_id) },
+    data,
+  });
+
+  return item;
 }
 
 async function deleteItem(item_id, user_id) {
-  const [result] = await pool.execute(
-    `
-      DELETE FROM item
-      WHERE item_id = ?
-        AND user_id = ?
-    `,
-    [item_id, user_id],
-  );
+  const existing = await findById(item_id, user_id);
 
-  return result.affectedRows > 0;
+  if (!existing) {
+    return false;
+  }
+
+  await prisma.item.delete({
+    where: { item_id: Number(item_id) },
+  });
+
+  return true;
 }
 
 module.exports = {
